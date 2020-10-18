@@ -1,0 +1,94 @@
+/* chmlib-version.h.in
+ *
+ * Copyright 2020 Mario Daniel Ruiz Saavedra
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#pragma once
+
+#if !defined(CHMLIB_INSIDE) && !defined(CHMLIB_COMPILATION)
+# error "Only <chmlib.h> can be included directly."
+#endif
+
+/**
+ * SECTION:chmlibversion
+ * @short_description: chmlib version checking
+ *
+ * chmlib provides macros to check the version of the library
+ * at compile-time
+ */
+
+/**
+ * CHMLIB_MAJOR_VERSION:
+ *
+ * chmlib major version component (e.g. 1 if %CHMLIB_VERSION is 1.2.3)
+ */
+#define CHMLIB_MAJOR_VERSION (@MAJOR_VERSION@)
+
+/**
+ * CHMLIB_MINOR_VERSION:
+ *
+ * chmlib minor version component (e.g. 2 if %CHMLIB_VERSION is 1.2.3)
+ */
+#define CHMLIB_MINOR_VERSION (@MINOR_VERSION@)
+
+/**
+ * CHMLIB_MICRO_VERSION:
+ *
+ * chmlib micro version component (e.g. 3 if %CHMLIB_VERSION is 1.2.3)
+ */
+#define CHMLIB_MICRO_VERSION (@MICRO_VERSION@)
+
+/**
+ * CHMLIB_VERSION
+ *
+ * chmlib version.
+ */
+#define CHMLIB_VERSION (@VERSION@)
+
+/**
+ * CHMLIB_VERSION_S:
+ *
+ * chmlib version, encoded as a string, useful for printing and
+ * concatenation.
+ */
+#define CHMLIB_VERSION_S "@VERSION@"
+
+#define CHMLIB_ENCODE_VERSION(major,minor,micro) \
+        ((major) << 24 | (minor) << 16 | (micro) << 8)
+
+/**
+ * CHMLIB_VERSION_HEX:
+ *
+ * chmlib version, encoded as an hexadecimal number, useful for
+ * integer comparisons.
+ */
+#define CHMLIB_VERSION_HEX \
+        (CHMLIB_ENCODE_VERSION (CHMLIB_MAJOR_VERSION, CHMLIB_MINOR_VERSION, CHMLIB_MICRO_VERSION))
+
+/**
+ * CHMLIB_CHECK_VERSION:
+ * @major: required major version
+ * @minor: required minor version
+ * @micro: required micro version
+ *
+ * Compile-time version checking. Evaluates to %TRUE if the version
+ * of chmlib is greater than the required one.
+ */
+#define CHMLIB_CHECK_VERSION(major,minor,micro)   \
+        (CHMLIB_MAJOR_VERSION > (major) || \
+         (CHMLIB_MAJOR_VERSION == (major) && CHMLIB_MINOR_VERSION > (minor)) || \
+         (CHMLIB_MAJOR_VERSION == (major) && CHMLIB_MINOR_VERSION == (minor) && \
+          CHMLIB_MICRO_VERSION >= (micro)))

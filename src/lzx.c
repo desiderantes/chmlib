@@ -1,32 +1,33 @@
-/***************************************************************************
- *                        lzx.c - LZX decompression routines               *
- *                           -------------------                           *
- *                                                                         *
- *  maintainer: Jed Wing <jedwin@ugcs.caltech.edu>                         *
- *  source:     modified lzx.c from cabextract v0.5                        *
- *  notes:      This file was taken from cabextract v0.5, which was,       *
- *              itself, a modified version of the lzx decompression code   *
- *              from unlzx.                                                *
- *                                                                         *
- *  platforms:  In its current incarnation, this file has been tested on   *
- *              two different Linux platforms (one, redhat-based, with a   *
- *              2.1.2 glibc and gcc 2.95.x, and the other, Debian, with    *
- *              2.2.4 glibc and both gcc 2.95.4 and gcc 3.0.2).  Both were *
- *              Intel x86 compatible machines.                             *
- ***************************************************************************/
+/* lzx.c - LZX decompression routines
+ *
+ * Copyright 2020 Jed Wing <jedwin@ugcs.caltech.edu>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.  Note that an exemption to this   *
- *   license has been granted by Stuart Caie for the purposes of           *
- *   distribution with chmlib.  This does not, to the best of my           *
- *   knowledge, constitute a change in the license of this (the LZX) code  *
- *   in general.                                                           *
- *                                                                         *
- ***************************************************************************/
+/*
+ *  source:     modified lzx.c from cabextract v0.5
+ *  notes:      This file was taken from cabextract v0.5, which was,
+ *              itself, a modified version of the lzx decompression code
+ *              from unlzx.
+ *
+ *  platforms:  In its current incarnation, this file has been tested on
+ *              two different Linux platforms (one, redhat-based, with a
+ *              2.1.2 glibc and gcc 2.95.x, and the other, Debian, with
+ *              2.2.4 glibc and both gcc 2.95.4 and gcc 3.0.2).  Both were
+ *              Intel x86 compatible machines.
+ */
 
 #include "lzx.h"
 #include <stdio.h>

@@ -1,19 +1,25 @@
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU Lesser General Public License as        *
- *   published by the Free Software Foundation; either version 2.1 of the  *
- *   License, or (at your option) any later version.                       *
- *                                                                         *
- ***************************************************************************/
+/* test.c
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "chm_lib.h"
-
+#include "glib.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "sha1.h"
 
 /* return true if s contains ',' */
 static bool needs_csv_escaping(const char* s) {
@@ -22,22 +28,6 @@ static bool needs_csv_escaping(const char* s) {
     }
     return *s == ',';
 }
-
-static char hex_char(int n) {
-    static const char* s = "0123456789ABCDEF";
-    return s[n];
-}
-
-static void sha1_to_hex(uint8_t* sha1, char* sha1Hex) {
-    for (int i = 0; i < 20; i++) {
-        uint8_t c = sha1[i];
-        int n = (c >> 4) & 0xf;
-        sha1Hex[i * 2] = hex_char(n);
-        n = c & 0xf;
-        sha1Hex[(i * 2) + 1] = hex_char(n);
-    }
-}
-
 static uint8_t* extract_entry(struct chm_file* h, chm_entry* e) {
     int64_t len = (int64_t)e->length;
 
@@ -57,8 +47,7 @@ static uint8_t* extract_entry(struct chm_file* h, chm_entry* e) {
 
 static bool process_entry(struct chm_file* h, chm_entry* e) {
     char buf[128] = {0};
-    uint8_t sha1[20] = {0};
-    char sha1Hex[41] = {0};
+    gchar *sha1 = {0};
 
     int isFile = e->flags & CHM_ENUMERATE_FILES;
 
@@ -75,20 +64,15 @@ static bool process_entry(struct chm_file* h, chm_entry* e) {
     if (e->length > 0) {
         uint8_t* d = extract_entry(h, e);
         if (d != NULL) {
-            int err = sha1_process_all(d, (unsigned long)e->length, sha1);
-            free(d);
-            if (err != CRYPT_OK) {
-                return false;
-            }
+            sha1 = g_compute_checksum_for_data (G_CHECKSUM_SHA1, d, e->length);
         }
     }
 
-    sha1_to_hex(sha1, sha1Hex);
     if (needs_csv_escaping(e->path)) {
         printf("%d,%d,%d,%s,%s,\"%s\"\n", (int)e->space, (int)e->start, (int)e->length, buf,
-               sha1Hex, e->path);
+               sha1, e->path);
     } else {
-        printf("%1d,%d,%d,%s,%s,%s\n", (int)e->space, (int)e->start, (int)e->length, buf, sha1Hex,
+        printf("%1d,%d,%d,%s,%s,%s\n", (int)e->space, (int)e->start, (int)e->length, buf, sha1,
                e->path);
     }
     return true;

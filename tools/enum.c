@@ -1,27 +1,33 @@
-/***************************************************************************
- *          enum_chmLib.c - CHM archive test driver                        *
- *                           -------------------                           *
- *                                                                         *
- *  author:     Jed Wing <jedwin@ugcs.caltech.edu>                         *
- *  notes:      This is a quick-and-dirty test driver for the chm lib      *
- *              routines.  The program takes as its input the paths to one *
- *              or more .chm files.  It attempts to open each .chm file in *
- *              turn, and display a listing of all of the files in the     *
- *              archive.                                                   *
- *                                                                         *
- *              It is not included as a particularly useful program, but   *
- *              rather as a sort of "simplest possible" example of how to  *
- *              use the enumerate portion of the API.                      *
- ***************************************************************************/
+/* enum.c - CHM archive test driver
+ *
+ * Copyright 2020 Jed Wing <jedwin@ugcs.caltech.edu>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU Lesser General Public License as        *
- *   published by the Free Software Foundation; either version 2.1 of the  *
- *   License, or (at your option) any later version.                       *
- *                                                                         *
- ***************************************************************************/
+
+/*
+ * This is a quick-and-dirty test driver for the chm lib
+ * routines.  The program takes as its input the paths to one
+ * or more .chm files.  It attempts to open each .chm file in
+ * turn, and display a listing of all of the files in the
+ * archive.
+ *
+ * It is not included as a particularly useful program, but
+ * rather as a sort of "simplest possible" example of how to
+ * use the enumerate portion of the API.
+ */
 
 #include "chm_lib.h"
 

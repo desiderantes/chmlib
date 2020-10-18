@@ -1,30 +1,36 @@
-/***************************************************************************
- *             chm_http.c - CHM archive test driver                        *
- *                           -------------------                           *
- *                                                                         *
- *  author:     Jed Wing <jedwin@ugcs.caltech.edu>                         *
- *  notes:      This is a slightly more complex test driver for the chm    *
- *              routines.  It also serves the purpose of making .chm html  *
- *              help files viewable from a text mode browser, which was my *
- *              original purpose for all of this.                          *
- *                                                                         *
- *              It is not included with the expectation that it will be of *
- *              use to others; nor is it included as an example of a       *
- *              stunningly good implementation of an HTTP server.  It is,  *
-j *              in fact, probably badly broken for any serious usage.      *
- *                                                                         *
- *              Nevertheless, it is another example program, and it does   *
- *              serve a purpose for me, so I've included it as well.       *
- ***************************************************************************/
+/* chm_http.c - CHM archive test driver
+ *
+ * Copyright 2020 Jed Wing <jedwin@ugcs.caltech.edu>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU Lesser General Public License as        *
- *   published by the Free Software Foundation; either version 2.1 of the  *
- *   License, or (at your option) any later version.                       *
- *                                                                         *
- ***************************************************************************/
+
+/*
+ * This is a slightly more complex test driver for the chm
+ * routines.  It also serves the purpose of making .chm html
+ * help files viewable from a text mode browser, which was my
+ * original purpose for all of this.
+ *
+ * It is not included with the expectation that it will be of
+ * use to others; nor is it included as an example of a
+ * stunningly good implementation of an HTTP server.  It is,
+ * in fact, probably badly broken for any serious usage.
+ *
+ * Nevertheless, it is another example program, and it does
+ * serve a purpose for me, so I've included it as well.
+ **/
 
 #include "chm_lib.h"
 
