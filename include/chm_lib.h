@@ -208,10 +208,6 @@ void chm_set_cache_size(struct chm_file* h, int nCacheBlocks);
 
 bool chm_parse(struct chm_file* f, chm_reader read_func, void* read_ctx);
 
-/* allow intercepting debug messages from the code */
-typedef void (*dbgprintfunc)(const char* s);
-void chm_set_dbgprint(dbgprintfunc f);
-
 /* retrieve part of an entry from the archive */
 int64_t chm_retrieve_entry(struct chm_file* h, chm_entry* e, unsigned char* buf, int64_t addr,
                            int64_t len);

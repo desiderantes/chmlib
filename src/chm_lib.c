@@ -2,9 +2,9 @@
  *
  * Copyright 2020 Jed Wing <jedwin@ugcs.caltech.edu>
  *
- * This program is free software: you can redistribute it and/or modify
+ * This program is g_free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 2.1 of the License, or
+ * the g_free Software Foundation, either version 2.1 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -51,7 +51,6 @@
 
 #ifdef WIN32
 #include <windows.h>
-#include <malloc.h>
 #include <io.h>
 #include <fcntl.h>
 #define strcasecmp stricmp
@@ -62,7 +61,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-/* #include <dmalloc.h> */
 #endif
 
 #include "chm_lib.h"
@@ -90,7 +88,7 @@ static const char _chm_pmgl_marker[4] = "PMGL";
 #define CHM_PMGL_LEN 0x14
 typedef struct pgml_hdr {
     char signature[4];     /*  0 (PMGL) */
-    uint32_t free_space;   /*  4 */
+    uint32_t g_free_space;   /*  4 */
     uint32_t unknown_0008; /*  8 */
     int32_t block_prev;    /*  c */
     int32_t block_next;    /* 10 */
@@ -143,7 +141,6 @@ void fd_reader_close(fd_reader_ctx* ctx) {
     }
 }
 
-#if 0
 int64_t fd_reader(void* ctx_arg, void* buf, int64_t off, int64_t len) {
   fd_reader_ctx *ctx = (fd_reader_ctx*)ctx_arg;
   if (ctx->fd == -1) {
@@ -151,19 +148,7 @@ int64_t fd_reader(void* ctx_arg, void* buf, int64_t off, int64_t len) {
   }
   return pread64(ctx->fd, buf, (long)len, off);
 }
-#endif
 
-int64_t fd_reader(void* ctx_arg, void* buf, int64_t off, int64_t len) {
-    fd_reader_ctx* ctx = (fd_reader_ctx*)ctx_arg;
-    if (ctx->fd == -1) {
-        return -1;
-    }
-    int64_t oldOff = lseek(ctx->fd, 0, SEEK_CUR);
-    lseek(ctx->fd, (long)off, SEEK_SET);
-    int64_t n = read(ctx->fd, buf, (size_t)len);
-    lseek(ctx->fd, (long)oldOff, SEEK_SET);
-    return n;
-}
 
 #ifdef WIN32
 bool win_reader_init(win_reader_ctx* ctx, const WCHAR* path) {
@@ -221,32 +206,7 @@ static int ffs(unsigned int val) {
 }
 #endif
 
-static dbgprintfunc g_dbg_print = NULL;
 
-void chm_set_dbgprint(dbgprintfunc f) {
-    g_dbg_print = f;
-}
-
-static void dbgprintf(const char* fmt, ...) {
-    if (g_dbg_print == NULL) {
-        return;
-    }
-    char buf[4096] = {0};
-    va_list args;
-    va_start(args, fmt);
-    /* TODO: vsnprintf_s if MSVC */
-    vsnprintf(buf, sizeof(buf) - 1, fmt, args);
-    g_dbg_print(buf);
-}
-
-#if 0
-static void hexprint(uint8_t* d, int n) {
-    for (int i = 0; i < n; i++) {
-        dbgprintf("%x ", (int)d[i]);
-    }
-    dbgprintf("\n");
-}
-#endif
 
 static void memzero(void* d, size_t len) {
     memset(d, 0, len);
@@ -364,7 +324,7 @@ static bool unmarshal_itsf_header(unmarshaller* u, itsf_hdr* hdr) {
 
     int ver = hdr->version;
     if (!(ver == 2 || ver == 3)) {
-        dbgprintf("invalid ver %d\n", ver);
+        g_debug("invalid ver %d\n", ver);
         return false;
     }
 
@@ -441,7 +401,7 @@ static bool unmarshal_pmgl_header(unmarshaller* u, unsigned int blockLen, pgml_h
         return false;
 
     get_pchar(u, hdr->signature, 4);
-    hdr->free_space = get_uint32(u);
+    hdr->g_free_space = get_uint32(u);
     hdr->unknown_0008 = get_uint32(u);
     hdr->block_prev = get_int32(u);
     hdr->block_next = get_int32(u);
@@ -449,7 +409,7 @@ static bool unmarshal_pmgl_header(unmarshaller* u, unsigned int blockLen, pgml_h
     if (!memeq(hdr->signature, _chm_pmgl_marker, 4)) {
         return false;
     }
-    if (hdr->free_space > blockLen - CHM_PMGL_LEN) {
+    if (hdr->g_free_space > blockLen - CHM_PMGL_LEN) {
         return false;
     }
 
@@ -547,12 +507,12 @@ static bool is_null_or_compressed(chm_entry* e) {
     return (e == NULL) || (e->space == CHM_COMPRESSED);
 }
 
-static void free_entries(chm_entry* first) {
+static void g_free_entries(chm_entry* first) {
     chm_entry* next;
     chm_entry* e = first;
     while (e != NULL) {
         next = e->next;
-        free(e);
+        g_free(e);
         e = next;
     }
 }
@@ -567,13 +527,13 @@ void chm_close(chm_file* h) {
         lzx_teardown(h->lzx_state);
 
     for (int i = 0; i < h->n_cache_blocks; i++) {
-        free(h->cache_blocks[i]);
+        g_free(h->cache_blocks[i]);
     }
     if (h->entries != NULL) {
         if (h->n_entries > 0) {
-            free_entries(h->entries[0]);
+            g_free_entries(h->entries[0]);
         }
-        free(h->entries);
+        g_free(h->entries);
     }
 }
 
@@ -600,7 +560,7 @@ void chm_set_cache_size(chm_file* h, int nCacheBlocks) {
         if (h->cache_blocks[i]) {
             /* in case of collision, destroy newcomer */
             if (newBlocks[newSlot]) {
-                free(h->cache_blocks[i]);
+                g_free(h->cache_blocks[i]);
                 h->cache_blocks[i] = NULL;
             } else {
                 newBlocks[newSlot] = h->cache_blocks[i];
@@ -626,7 +586,7 @@ static uint8_t* alloc_cached_block(chm_file* h, int64_t nBlock) {
     int idx = (int)(nBlock % h->n_cache_blocks);
     if (!h->cache_blocks[idx]) {
         size_t blockSize = (size_t)h->reset_table.block_len;
-        h->cache_blocks[idx] = (uint8_t*)malloc(blockSize);
+        h->cache_blocks[idx] = (uint8_t*)g_malloc(blockSize);
     }
     if (h->cache_blocks[idx]) {
         h->cache_block_indices[idx] = nBlock;
@@ -724,7 +684,7 @@ static uint8_t* uncompress_block(chm_file* h, int64_t nBlock) {
         lzx_reset(h->lzx_state);
     }
 
-    uint8_t* buf = malloc(blockSize + 6144);
+    uint8_t* buf = g_malloc(blockSize + 6144);
     if (buf == NULL)
         return NULL;
 
@@ -733,7 +693,7 @@ static uint8_t* uncompress_block(chm_file* h, int64_t nBlock) {
         goto Error;
     }
 
-    dbgprintf("Decompressing block #%4d (EXTRA)\n", nBlock);
+    g_debug("Decompressing block #%4d (EXTRA)\n", nBlock);
     int64_t cmpStart, cmpLen;
     if (!get_cmpblock_bounds(h, nBlock, &cmpStart, &cmpLen)) {
         goto Error;
@@ -748,16 +708,16 @@ static uint8_t* uncompress_block(chm_file* h, int64_t nBlock) {
 
     int res = lzx_decompress(h->lzx_state, buf, uncompressed, (int)cmpLen, (int)blockSize);
     if (res != DECR_OK) {
-        dbgprintf("   (DECOMPRESS FAILED!)\n");
+        g_debug("   (DECOMPRESS FAILED!)\n");
         goto Error;
     }
 
     h->lzx_last_block = (int)nBlock;
     h->lzx_last_block_data = uncompressed;
-    free(buf);
+    g_free(buf);
     return uncompressed;
 Error:
-    free(buf);
+    g_free(buf);
     return NULL;
 }
 
@@ -875,7 +835,7 @@ static bool parse_entries(chm_file* h) {
     int n_entries = 0;
     chm_entry* e;
     chm_entry* last_entry = NULL;
-    uint8_t* buf = malloc((size_t)h->itsp.block_len);
+    uint8_t* buf = g_malloc((size_t)h->itsp.block_len);
     if (buf == NULL) {
         goto Error;
     }
@@ -893,7 +853,7 @@ static bool parse_entries(chm_file* h) {
         if (!unmarshal_pmgl_header(&u, h->itsp.block_len, &pgml)) {
             goto Error;
         }
-        u.bytesLeft -= pgml.free_space;
+        u.bytesLeft -= pgml.g_free_space;
 
         /* decode all entries in this page */
         while (u.bytesLeft > 0) {
@@ -926,7 +886,7 @@ Exit:
             }
         }
     }
-    free(buf);
+    g_free(buf);
     if (h->parse_entries_failed || n_entries == 0) {
         return false;
     }
@@ -973,7 +933,7 @@ bool chm_parse(chm_file* h, chm_reader read_func, void* read_ctx) {
 
     unmarshaller_init(&u, (uint8_t*)buf, (int)n);
     if (!unmarshal_itsf_header(&u, &h->itsf)) {
-        dbgprintf("unmarshal_itsf_header() failed\n");
+        g_debug("unmarshal_itsf_header() failed\n");
         goto Error;
     }
 
